@@ -3,10 +3,13 @@
 #
 
 BIN_LST="sh ssh bash rsync nc telnet cat ls pwd cp chmod chown mkdir mv rm mktemp sync tar less more ln kill find grep ps"
-LIBS=""
-DIRS=""
+LIBS="$(find {/lib,/lib64,/usr/lib,/usr/lib64} -name libns[sl]\*)\n"
+DIRS="/etc\n"
 BINS=""
 TARGET_DIR=$(echo "${1}"|sed 's/\/$//g')
+OTHER_FILES="/etc/passwd
+/etc/group
+/etc/nsswitch.conf"
 
 echo $TARGET_DIR
 if [ ! "${TARGET_DIR}" ]; then
@@ -45,6 +48,12 @@ done
 
 for i in ${LIBS}; do
 	SRC=${i}
+        i=$(echo "${i}"|sed 's/^\///g')
+        cp ${SRC} "${TARGET_DIR}/${i}"
+done
+
+for i in ${OTHER_FILES}; do
+        SRC=${i}
         i=$(echo "${i}"|sed 's/^\///g')
         cp ${SRC} "${TARGET_DIR}/${i}"
 done
