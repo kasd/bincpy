@@ -1,3 +1,7 @@
+#
+# !!! Do not use this script on production !!!
+#
+
 BIN_LST="sh ssh bash rsync nc telnet cat ls pwd cp chmod chown mkdir mv rm mktemp sync tar less more ln kill find grep ps"
 LIBS=""
 DIRS=""
@@ -13,6 +17,7 @@ for i in ${BIN_LST}; do
 	BIN=$(which ${i} 2>/dev/null)
         if [ "${BIN}" ]; then
 		LIBS="${LIBS}$(ldd ${BIN}|awk '$3 && $3 ~ "^/" {print $3}')\n"
+		LIBS="${LIBS}$(ldd ${BIN}|grep 'ld-linux.*\.so\.[0-9]\{0,1\}'|awk '$1 {print $1}')\n"
 		DIRS="${DIRS}$(dirname ${BIN})\n"
 		BINS="${BINS}${BIN}\n"	
 	fi
@@ -29,7 +34,6 @@ DIRS=$(echo -e "${DIRS}"|sort|uniq|awk '$1 {print $1}')
 
 for i in ${DIRS}; do
 	i=$(echo "${i}"|sed 's/^\///g')
-	#echo "${TARGET_DIR}/${i}"
 	mkdir -p "${TARGET_DIR}/${i}"
 done
 
