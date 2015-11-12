@@ -19,7 +19,7 @@ fi
 for i in ${BIN_LST}; do
 	BIN=$(which ${i} 2>/dev/null)
         if [ "${BIN}" ]; then
-		LIBS="${LIBS}$(ldd ${BIN}|awk '$3 && $3 ~ "^/" {print $3}')\n"
+		LIBS="${LIBS}$(ldd ${BIN}|awk '$3 && $3 ~ "^/" {print $3}')\n" # objdump -p /path/to/program | grep NEEDED
 		LIBS="${LIBS}$(ldd ${BIN}|grep 'ld-linux.*\.so\.[0-9]\{0,1\}'|awk '$1 {print $1}')\n"
 		DIRS="${DIRS}$(dirname ${BIN})\n"
 		BINS="${BINS}${BIN}\n"	
